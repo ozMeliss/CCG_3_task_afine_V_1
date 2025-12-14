@@ -59,6 +59,10 @@ public class GuiController {
     private boolean keyZ = false;
     private boolean keyX = false;
     private boolean keyC = false;
+    private boolean keyF = false;
+    private boolean keyV = false;
+    private boolean keyG = false;
+    private boolean keyB = false;
 
     @FXML
     private void initialize() {
@@ -108,6 +112,10 @@ public class GuiController {
             case Z:     keyZ = true; break;
             case X:     keyX = true; break;
             case C:     keyC = true; break;
+            case F:     keyF = true; break;
+            case V:     keyV = true; break;
+            case G:     keyG = true; break;
+            case B:     keyB = true; break;
             case R:     // Сброс по R
                 modelTransform.reset();
                 break;
@@ -129,6 +137,10 @@ public class GuiController {
             case Z:     keyZ = false; break;
             case X:     keyX = false; break;
             case C:     keyC = false; break;
+            case F:     keyF = false; break;
+            case V:     keyV = false; break;
+            case G:     keyG = false; break;
+            case B:     keyB = false; break;
         }
     }
 
@@ -146,39 +158,21 @@ public class GuiController {
         if (keyA) modelTransform.rotate(0, ROTATION_SPEED, 0); // вокруг Y
         if (keyD) modelTransform.rotate(0, -ROTATION_SPEED, 0);
 
-        // Масштабирование: EZXC
-        if (keyE) { // Увеличить (E)
-            Vector3f scale = modelTransform.getScale();
-            modelTransform.setScale(new Vector3f(
-                    scale.x * SCALE_SPEED,
-                    scale.y * SCALE_SPEED,
-                    scale.z * SCALE_SPEED
-            ));
-        }
-        if (keyZ) { // Уменьшить (Z)
-            Vector3f scale = modelTransform.getScale();
-            modelTransform.setScale(new Vector3f(
-                    scale.x / SCALE_SPEED,
-                    scale.y / SCALE_SPEED,
-                    scale.z / SCALE_SPEED
-            ));
-        }
-        if (keyX) { // Растянуть по X (X)
-            Vector3f scale = modelTransform.getScale();
-            modelTransform.setScale(new Vector3f(
-                    scale.x * SCALE_SPEED,
-                    scale.y,
-                    scale.z
-            ));
-        }
-        if (keyC) { // Сжать по X (C)
-            Vector3f scale = modelTransform.getScale();
-            modelTransform.setScale(new Vector3f(
-                    scale.x / SCALE_SPEED,
-                    scale.y,
-                    scale.z
-            ));
-        }
+        // Масштабирование всей модели
+        if (keyE) modelTransform.scale(SCALE_SPEED); // Увеличить всю модель (E)
+        if (keyZ) modelTransform.scale(1.0f / SCALE_SPEED); // Уменьшить всю модель (Z)
+
+        // Масштабирование по оси X (уши) - растяжение/сжатие по бокам
+        if (keyX) modelTransform.scaleX(SCALE_SPEED); // Растянуть по X (X)
+        if (keyC) modelTransform.scaleX(1.0f / SCALE_SPEED); // Сжать по X (C)
+
+        // Масштабирование по оси Y (макушка-шея) - растяжение/сжатие по вертикали
+        if (keyF) modelTransform.scaleY(SCALE_SPEED); // Растянуть по Y (F)
+        if (keyV) modelTransform.scaleY(1.0f / SCALE_SPEED); // Сжать по Y (V)
+
+        // Масштабирование по оси Z (нос-затылок) - растяжение/сжатие по глубине
+        if (keyG) modelTransform.scaleZ(SCALE_SPEED); // Растянуть по Z (G)
+        if (keyB) modelTransform.scaleZ(1.0f / SCALE_SPEED); // Сжать по Z (B)
     }
 
     @FXML

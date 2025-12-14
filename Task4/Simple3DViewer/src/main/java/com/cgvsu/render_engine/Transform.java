@@ -32,9 +32,25 @@ public class Transform {
         rotation.z += dz;
     }
 
+    // Масштабирование по всем осям
     public void scale(float factor) {
         scale.x *= factor;
         scale.y *= factor;
+        scale.z *= factor;
+    }
+
+    // Масштабирование по оси X
+    public void scaleX(float factor) {
+        scale.x *= factor;
+    }
+
+    // Масштабирование по оси Y
+    public void scaleY(float factor) {
+        scale.y *= factor;
+    }
+
+    // Масштабирование по оси Z
+    public void scaleZ(float factor) {
         scale.z *= factor;
     }
 
