@@ -9,17 +9,14 @@ public class Transform {
 
     public Transform() {}
 
-    // Геттеры
     public Vector3f getTranslation() { return translation; }
     public Vector3f getRotation() { return rotation; }
     public Vector3f getScale() { return scale; }
 
-    // Сеттеры
     public void setTranslation(Vector3f translation) { this.translation = translation; }
     public void setRotation(Vector3f rotation) { this.rotation = rotation; }
     public void setScale(Vector3f scale) { this.scale = scale; }
 
-    // Методы для изменения
     public void translate(float dx, float dy, float dz) {
         translation.x += dx;
         translation.y += dy;
@@ -32,24 +29,21 @@ public class Transform {
         rotation.z += dz;
     }
 
-    // Масштабирование по всем осям
+    // Масштабирование по всем осям для увеличения/уменьшения
     public void scale(float factor) {
         scale.x *= factor;
         scale.y *= factor;
         scale.z *= factor;
     }
 
-    // Масштабирование по оси X
     public void scaleX(float factor) {
         scale.x *= factor;
     }
 
-    // Масштабирование по оси Y
     public void scaleY(float factor) {
         scale.y *= factor;
     }
 
-    // Масштабирование по оси Z
     public void scaleZ(float factor) {
         scale.z *= factor;
     }
