@@ -8,7 +8,6 @@ import org.junit.jupiter.api.BeforeEach;
 import static org.junit.jupiter.api.Assertions.*;
 
 import javax.vecmath.Matrix4f;
-import javax.vecmath.Point2f;
 import javax.vecmath.Vector3f;
 
 public class AfineTest {
@@ -81,9 +80,9 @@ public class AfineTest {
         transform.translate(2.0f, -3.0f, 1.0f);
 
         Vector3f actual = transform.getTranslation();
-        assertEquals(7.0f, actual.x, 0.001f);  // 5 + 2
-        assertEquals(2.0f, actual.y, 0.001f);  // 5 + (-3)
-        assertEquals(6.0f, actual.z, 0.001f);  // 5 + 1
+        assertEquals(7.0f, actual.x, 0.001f);
+        assertEquals(2.0f, actual.y, 0.001f);
+        assertEquals(6.0f, actual.z, 0.001f);
     }
 
     @Test
@@ -108,30 +107,25 @@ public class AfineTest {
         transform.rotate(0.5f, -0.1f, 0.2f);
 
         Vector3f actual = transform.getRotation();
-        assertEquals(0.6f, actual.x, 0.001f);  // 0.1 + 0.5
-        assertEquals(0.1f, actual.y, 0.001f);  // 0.2 + (-0.1)
-        assertEquals(0.5f, actual.z, 0.001f);  // 0.3 + 0.2
+        assertEquals(0.6f, actual.x, 0.001f);
+        assertEquals(0.1f, actual.y, 0.001f);
+        assertEquals(0.5f, actual.z, 0.001f);
     }
 
     @Test
     public void testScaleUniform() {
-        // Исходный масштаб
         transform.setScale(new Vector3f(2.0f, 2.0f, 2.0f));
-
-        // Равномерное масштабирование
         transform.scale(1.5f);
 
         Vector3f actual = transform.getScale();
-        assertEquals(3.0f, actual.x, 0.001f);  // 2.0 * 1.5
+        assertEquals(3.0f, actual.x, 0.001f);
         assertEquals(3.0f, actual.y, 0.001f);
         assertEquals(3.0f, actual.z, 0.001f);
     }
 
     @Test
     public void testScaleUniformFromDefault() {
-        // Равномерное масштабирование от значений по умолчанию
         transform.scale(2.0f);
-
         Vector3f actual = transform.getScale();
         assertEquals(2.0f, actual.x, 0.001f);
         assertEquals(2.0f, actual.y, 0.001f);
@@ -141,7 +135,6 @@ public class AfineTest {
     @Test
     public void testScaleX() {
         transform.scaleX(2.0f);
-
         Vector3f actual = transform.getScale();
         assertEquals(2.0f, actual.x, 0.001f);
         assertEquals(1.0f, actual.y, 0.001f);
@@ -151,7 +144,6 @@ public class AfineTest {
     @Test
     public void testScaleY() {
         transform.scaleY(3.0f);
-
         Vector3f actual = transform.getScale();
         assertEquals(1.0f, actual.x, 0.001f);
         assertEquals(3.0f, actual.y, 0.001f);
@@ -161,7 +153,6 @@ public class AfineTest {
     @Test
     public void testScaleZ() {
         transform.scaleZ(0.5f);
-
         Vector3f actual = transform.getScale();
         assertEquals(1.0f, actual.x, 0.001f);
         assertEquals(1.0f, actual.y, 0.001f);
@@ -174,7 +165,6 @@ public class AfineTest {
         transform.scaleX(0.5f);
         transform.scaleY(3.0f);
         transform.scale(1.5f);
-
         Vector3f actual = transform.getScale();
         assertEquals(1.5f, actual.x, 0.001f);
         assertEquals(9.0f, actual.y, 0.001f);
@@ -183,7 +173,6 @@ public class AfineTest {
 
     @Test
     public void testReset() {
-
         transform.setTranslation(new Vector3f(10.0f, 20.0f, 30.0f));
         transform.setRotation(new Vector3f(1.0f, 2.0f, 3.0f));
         transform.setScale(new Vector3f(4.0f, 5.0f, 6.0f));
@@ -229,7 +218,6 @@ public class AfineTest {
     @Test
     public void testNegativeTranslation() {
         transform.translate(-5.0f, -10.0f, -15.0f);
-
         Vector3f actual = transform.getTranslation();
         assertEquals(-5.0f, actual.x, 0.001f);
         assertEquals(-10.0f, actual.y, 0.001f);
@@ -239,7 +227,6 @@ public class AfineTest {
     @Test
     public void testNegativeRotation() {
         transform.rotate(-0.5f, -1.0f, -1.5f);
-
         Vector3f actual = transform.getRotation();
         assertEquals(-0.5f, actual.x, 0.001f);
         assertEquals(-1.0f, actual.y, 0.001f);
@@ -260,7 +247,7 @@ public class AfineTest {
         transform.scale(2.0f);
         transform.scale(0.5f);
         Vector3f actual = transform.getScale();
-        assertEquals(1.0f, actual.x, 0.001f);  // 2 * 0.5 = 1
+        assertEquals(1.0f, actual.x, 0.001f);
         assertEquals(1.0f, actual.y, 0.001f);
         assertEquals(1.0f, actual.z, 0.001f);
     }

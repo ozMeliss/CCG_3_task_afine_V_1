@@ -75,7 +75,7 @@ public class GraphicConveyor {
         return new Matrix4f(matrix);
     }
 
-    // Матрицы поворота
+
     public static Matrix4f createRotationXMatrix(float angle) {
         float cos = (float) Math.cos(angle);
         float sin = (float) Math.sin(angle);
@@ -109,7 +109,6 @@ public class GraphicConveyor {
         return new Matrix4f(matrix);
     }
 
-    // Полная матрица модели
     public static Matrix4f createModelMatrix(Vector3f translation, Vector3f rotation, Vector3f scale) {
         Matrix4f scaleMatrix = createScaleMatrix(scale);
         // Поворот (Z → Y → X)
@@ -132,7 +131,7 @@ public class GraphicConveyor {
         // Перемещение
         Matrix4f translationMatrix = createTranslationMatrix(translation);
 
-        // Объединяем: Scale * Rotation * Translation
+        // Scale * Rotation * Translation
         Matrix4f result = new Matrix4f(scaleMatrix);
         result.mul(rotationMatrix);
         result.mul(translationMatrix);
