@@ -16,7 +16,7 @@ public class RenderEngine {
             final Model mesh,
             final int width,
             final int height,
-            final Transform transform)  // Добавили параметр
+            final Transform transform)
     {
         // Используем трансформации модели
         Matrix4f modelMatrix = GraphicConveyor.createModelMatrix(

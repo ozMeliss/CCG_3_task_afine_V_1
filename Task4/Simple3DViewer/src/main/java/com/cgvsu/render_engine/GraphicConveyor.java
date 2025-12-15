@@ -3,14 +3,14 @@ import javax.vecmath.*;
 
 public class GraphicConveyor {
 
-    public static Matrix4f rotateScaleTranslate() {
+    /*public static Matrix4f rotateScaleTranslate() {
         float[] matrix = new float[]{
                 1, 0, 0, 0,
                 0, 1, 0, 0,
                 0, 0, 1, 0,
                 0, 0, 0, 1};
         return new Matrix4f(matrix);
-    }
+    }*/
 
     public static Matrix4f lookAt(Vector3f eye, Vector3f target) {
         return lookAt(eye, target, new Vector3f(0F, 1.0F, 0F));
@@ -120,10 +120,8 @@ public class GraphicConveyor {
 
     // Полная матрица модели
     public static Matrix4f createModelMatrix(Vector3f translation, Vector3f rotation, Vector3f scale) {
-        // Масштабирование
         Matrix4f scaleMatrix = createScaleMatrix(scale);
-
-        // Поворот (порядок: Z → Y → X)
+        // Поворот (Z → Y → X)
         Matrix4f rotationMatrix = new Matrix4f();
         rotationMatrix.setIdentity();
 
