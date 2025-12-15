@@ -63,13 +63,14 @@ public class GuiController {
     private boolean keyV = false;
     private boolean keyG = false;
     private boolean keyB = false;
+    private boolean keyO = false;
+    private boolean keyP = false;
 
     @FXML
     private void initialize() {
         anchorPane.prefWidthProperty().addListener((ov, oldValue, newValue) -> canvas.setWidth(newValue.doubleValue()));
         anchorPane.prefHeightProperty().addListener((ov, oldValue, newValue) -> canvas.setHeight(newValue.doubleValue()));
 
-        // Настройка обработки клавиатуры
         canvas.setFocusTraversable(true);
         canvas.setOnKeyPressed(this::handleKeyPressed);
         canvas.setOnKeyReleased(this::handleKeyReleased);
@@ -84,7 +85,6 @@ public class GuiController {
             canvas.getGraphicsContext2D().clearRect(0, 0, width, height);
             camera.setAspectRatio((float) (width / height));
 
-            // Обработка непрерывного нажатия клавиш
             handleContinuousKeys();
 
             if (mesh != null) {
@@ -97,7 +97,6 @@ public class GuiController {
         timeline.play();
     }
 
-    // Обработка нажатия клавиш
     private void handleKeyPressed(KeyEvent event) {
         switch (event.getCode()) {
             case UP:    keyUp = true; break;
@@ -116,13 +115,12 @@ public class GuiController {
             case V:     keyV = true; break;
             case G:     keyG = true; break;
             case B:     keyB = true; break;
-            case R:     // Сброс по R
-                modelTransform.reset();
-                break;
+            case O:     keyO = true; break;
+            case P:     keyP = true; break;
+            case R:     modelTransform.reset(); break;
         }
     }
 
-    // Обработка отпускания клавиш
     private void handleKeyReleased(KeyEvent event) {
         switch (event.getCode()) {
             case UP:    keyUp = false; break;
@@ -141,38 +139,38 @@ public class GuiController {
             case V:     keyV = false; break;
             case G:     keyG = false; break;
             case B:     keyB = false; break;
+            case O:     keyO = false; break;
+            case P:     keyP = false; break;
         }
     }
 
-    // Обработка непрерывного нажатия (вызывается каждый кадр)
     private void handleContinuousKeys() {
-        // Перемещение модели: стрелки
         if (keyUp)    modelTransform.translate(0, TRANSLATION_SPEED, 0);
         if (keyDown)  modelTransform.translate(0, -TRANSLATION_SPEED, 0);
         if (keyLeft)  modelTransform.translate(-TRANSLATION_SPEED, 0, 0);
         if (keyRight) modelTransform.translate(TRANSLATION_SPEED, 0, 0);
 
-        // Вращение модели: WASD
+        // Вращение
         if (keyW) modelTransform.rotate(ROTATION_SPEED, 0, 0); // вокруг X
         if (keyS) modelTransform.rotate(-ROTATION_SPEED, 0, 0);
         if (keyA) modelTransform.rotate(0, ROTATION_SPEED, 0); // вокруг Y
         if (keyD) modelTransform.rotate(0, -ROTATION_SPEED, 0);
+        if (keyO) modelTransform.rotate(0, 0, ROTATION_SPEED); // вокруг Z
+        if (keyP) modelTransform.rotate(0, 0, -ROTATION_SPEED);
 
-        // Масштабирование всей модели
-        if (keyE) modelTransform.scale(SCALE_SPEED); // Увеличить всю модель (E)
-        if (keyZ) modelTransform.scale(1.0f / SCALE_SPEED); // Уменьшить всю модель (Z)
+        // Масштабирование полностью
+        if (keyE) modelTransform.scale(SCALE_SPEED);
+        if (keyZ) modelTransform.scale(1.0f / SCALE_SPEED);
+        // Масштабирование по оси X
+        if (keyX) modelTransform.scaleX(SCALE_SPEED);
+        if (keyC) modelTransform.scaleX(1.0f / SCALE_SPEED);
+        // Масштабирование по оси Y
+        if (keyF) modelTransform.scaleY(SCALE_SPEED);
+        if (keyV) modelTransform.scaleY(1.0f / SCALE_SPEED);
 
-        // Масштабирование по оси X (уши) - растяжение/сжатие по бокам
-        if (keyX) modelTransform.scaleX(SCALE_SPEED); // Растянуть по X (X)
-        if (keyC) modelTransform.scaleX(1.0f / SCALE_SPEED); // Сжать по X (C)
-
-        // Масштабирование по оси Y (макушка-шея) - растяжение/сжатие по вертикали
-        if (keyF) modelTransform.scaleY(SCALE_SPEED); // Растянуть по Y (F)
-        if (keyV) modelTransform.scaleY(1.0f / SCALE_SPEED); // Сжать по Y (V)
-
-        // Масштабирование по оси Z (нос-затылок) - растяжение/сжатие по глубине
-        if (keyG) modelTransform.scaleZ(SCALE_SPEED); // Растянуть по Z (G)
-        if (keyB) modelTransform.scaleZ(1.0f / SCALE_SPEED); // Сжать по Z (B)
+        // Масштабирование по оси Z
+        if (keyG) modelTransform.scaleZ(SCALE_SPEED);
+        if (keyB) modelTransform.scaleZ(1.0f / SCALE_SPEED);
     }
 
     @FXML
@@ -191,14 +189,12 @@ public class GuiController {
         try {
             String fileContent = Files.readString(fileName);
             mesh = ObjReader.read(fileContent);
-            // Сброс трансформаций при загрузке новой модели
             modelTransform.reset();
         } catch (IOException exception) {
             exception.printStackTrace();
         }
     }
 
-    // Методы для кнопок (оставляем на случай, если захотим дублировать функционал)
     @FXML
     public void handleCameraForward(ActionEvent actionEvent) {
         camera.movePosition(new Vector3f(0, 0, -TRANSLATION_SPEED));
@@ -227,11 +223,5 @@ public class GuiController {
     @FXML
     public void handleCameraDown(ActionEvent actionEvent) {
         camera.movePosition(new Vector3f(0, -TRANSLATION_SPEED, 0));
-    }
-
-    // Кнопка сброса трансформаций
-    @FXML
-    public void handleResetTransform(ActionEvent actionEvent) {
-        modelTransform.reset();
     }
 }
