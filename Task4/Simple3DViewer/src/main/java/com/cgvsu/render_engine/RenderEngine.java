@@ -18,7 +18,6 @@ public class RenderEngine {
             final int height,
             final Transform transform)
     {
-        // Используем трансформации модели
         Matrix4f modelMatrix = GraphicConveyor.createModelMatrix(
                 transform.getTranslation(),
                 transform.getRotation(),
