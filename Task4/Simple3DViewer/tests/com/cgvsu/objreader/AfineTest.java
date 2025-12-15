@@ -1,0 +1,502 @@
+package com.cgvsu.objreader;
+
+import com.cgvsu.render_engine.GraphicConveyor;
+import com.cgvsu.render_engine.Transform;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.BeforeEach;
+import static org.junit.jupiter.api.Assertions.*;
+
+import javax.vecmath.Matrix4f;
+import javax.vecmath.Point2f;
+import javax.vecmath.Vector3f;
+
+public class AfineTest {
+
+    private Transform transform;
+
+    @BeforeEach
+    public void setUp() {
+        transform = new Transform();
+    }
+
+    @Test
+    public void testDefaultConstructor() {
+        // Проверяем значения по умолчанию
+        Vector3f translation = transform.getTranslation();
+        Vector3f rotation = transform.getRotation();
+        Vector3f scale = transform.getScale();
+
+        assertEquals(0.0f, translation.x, 0.001f);
+        assertEquals(0.0f, translation.y, 0.001f);
+        assertEquals(0.0f, translation.z, 0.001f);
+
+        assertEquals(0.0f, rotation.x, 0.001f);
+        assertEquals(0.0f, rotation.y, 0.001f);
+        assertEquals(0.0f, rotation.z, 0.001f);
+
+        assertEquals(1.0f, scale.x, 0.001f);
+        assertEquals(1.0f, scale.y, 0.001f);
+        assertEquals(1.0f, scale.z, 0.001f);
+    }
+
+    @Test
+    public void testSetTranslation() {
+        Vector3f newTranslation = new Vector3f(10.0f, 20.0f, 30.0f);
+        transform.setTranslation(newTranslation);
+
+        Vector3f actual = transform.getTranslation();
+        assertEquals(10.0f, actual.x, 0.001f);
+        assertEquals(20.0f, actual.y, 0.001f);
+        assertEquals(30.0f, actual.z, 0.001f);
+    }
+
+    @Test
+    public void testSetRotation() {
+        Vector3f newRotation = new Vector3f(0.5f, 1.0f, 1.5f);
+        transform.setRotation(newRotation);
+
+        Vector3f actual = transform.getRotation();
+        assertEquals(0.5f, actual.x, 0.001f);
+        assertEquals(1.0f, actual.y, 0.001f);
+        assertEquals(1.5f, actual.z, 0.001f);
+    }
+
+    @Test
+    public void testSetScale() {
+        Vector3f newScale = new Vector3f(2.0f, 3.0f, 4.0f);
+        transform.setScale(newScale);
+
+        Vector3f actual = transform.getScale();
+        assertEquals(2.0f, actual.x, 0.001f);
+        assertEquals(3.0f, actual.y, 0.001f);
+        assertEquals(4.0f, actual.z, 0.001f);
+    }
+
+    @Test
+    public void testTranslate() {
+        // Исходное положение
+        transform.setTranslation(new Vector3f(5.0f, 5.0f, 5.0f));
+
+        // Применяем перемещение
+        transform.translate(2.0f, -3.0f, 1.0f);
+
+        Vector3f actual = transform.getTranslation();
+        assertEquals(7.0f, actual.x, 0.001f);  // 5 + 2
+        assertEquals(2.0f, actual.y, 0.001f);  // 5 + (-3)
+        assertEquals(6.0f, actual.z, 0.001f);  // 5 + 1
+    }
+
+    @Test
+    public void testTranslateMultipleTimes() {
+        // Многократное перемещение
+        transform.translate(1.0f, 0.0f, 0.0f);
+        transform.translate(0.0f, 2.0f, 0.0f);
+        transform.translate(0.0f, 0.0f, 3.0f);
+
+        Vector3f actual = transform.getTranslation();
+        assertEquals(1.0f, actual.x, 0.001f);
+        assertEquals(2.0f, actual.y, 0.001f);
+        assertEquals(3.0f, actual.z, 0.001f);
+    }
+
+    @Test
+    public void testRotate() {
+        // Исходный угол
+        transform.setRotation(new Vector3f(0.1f, 0.2f, 0.3f));
+
+        // Применяем вращение
+        transform.rotate(0.5f, -0.1f, 0.2f);
+
+        Vector3f actual = transform.getRotation();
+        assertEquals(0.6f, actual.x, 0.001f);  // 0.1 + 0.5
+        assertEquals(0.1f, actual.y, 0.001f);  // 0.2 + (-0.1)
+        assertEquals(0.5f, actual.z, 0.001f);  // 0.3 + 0.2
+    }
+
+    @Test
+    public void testScaleUniform() {
+        // Исходный масштаб
+        transform.setScale(new Vector3f(2.0f, 2.0f, 2.0f));
+
+        // Равномерное масштабирование
+        transform.scale(1.5f);
+
+        Vector3f actual = transform.getScale();
+        assertEquals(3.0f, actual.x, 0.001f);  // 2.0 * 1.5
+        assertEquals(3.0f, actual.y, 0.001f);
+        assertEquals(3.0f, actual.z, 0.001f);
+    }
+
+    @Test
+    public void testScaleUniformFromDefault() {
+        // Равномерное масштабирование от значений по умолчанию
+        transform.scale(2.0f);
+
+        Vector3f actual = transform.getScale();
+        assertEquals(2.0f, actual.x, 0.001f);
+        assertEquals(2.0f, actual.y, 0.001f);
+        assertEquals(2.0f, actual.z, 0.001f);
+    }
+
+    @Test
+    public void testScaleX() {
+        transform.scaleX(2.0f);
+
+        Vector3f actual = transform.getScale();
+        assertEquals(2.0f, actual.x, 0.001f);
+        assertEquals(1.0f, actual.y, 0.001f);  // Не изменилось
+        assertEquals(1.0f, actual.z, 0.001f);  // Не изменилось
+    }
+
+    @Test
+    public void testScaleY() {
+        transform.scaleY(3.0f);
+
+        Vector3f actual = transform.getScale();
+        assertEquals(1.0f, actual.x, 0.001f);
+        assertEquals(3.0f, actual.y, 0.001f);
+        assertEquals(1.0f, actual.z, 0.001f);
+    }
+
+    @Test
+    public void testScaleZ() {
+        transform.scaleZ(0.5f);
+
+        Vector3f actual = transform.getScale();
+        assertEquals(1.0f, actual.x, 0.001f);
+        assertEquals(1.0f, actual.y, 0.001f);
+        assertEquals(0.5f, actual.z, 0.001f);
+    }
+
+    @Test
+    public void testMultipleScaleOperations() {
+        // Комбинирование различных операций масштабирования
+        transform.scale(2.0f);         // Все оси: 2, 2, 2
+        transform.scaleX(0.5f);        // X: 2 * 0.5 = 1
+        transform.scaleY(3.0f);        // Y: 2 * 3 = 6
+        transform.scale(1.5f);         // Все оси: 1.5, 9, 3
+
+        Vector3f actual = transform.getScale();
+        assertEquals(1.5f, actual.x, 0.001f);  // 1 * 1.5
+        assertEquals(9.0f, actual.y, 0.001f);  // 6 * 1.5
+        assertEquals(3.0f, actual.z, 0.001f);  // 2 * 1.5
+    }
+
+    @Test
+    public void testReset() {
+        // Устанавливаем ненулевые значения
+        transform.setTranslation(new Vector3f(10.0f, 20.0f, 30.0f));
+        transform.setRotation(new Vector3f(1.0f, 2.0f, 3.0f));
+        transform.setScale(new Vector3f(4.0f, 5.0f, 6.0f));
+
+        // Сбрасываем
+        transform.reset();
+
+        // Проверяем сброс к значениям по умолчанию
+        Vector3f translation = transform.getTranslation();
+        Vector3f rotation = transform.getRotation();
+        Vector3f scale = transform.getScale();
+
+        assertEquals(0.0f, translation.x, 0.001f);
+        assertEquals(0.0f, translation.y, 0.001f);
+        assertEquals(0.0f, translation.z, 0.001f);
+
+        assertEquals(0.0f, rotation.x, 0.001f);
+        assertEquals(0.0f, rotation.y, 0.001f);
+        assertEquals(0.0f, rotation.z, 0.001f);
+
+        assertEquals(1.0f, scale.x, 0.001f);
+        assertEquals(1.0f, scale.y, 0.001f);
+        assertEquals(1.0f, scale.z, 0.001f);
+    }
+
+    @Test
+    public void testResetAfterOperations() {
+        // Выполняем различные операции
+        transform.translate(5.0f, 10.0f, 15.0f);
+        transform.rotate(0.5f, 1.0f, 1.5f);
+        transform.scale(2.0f);
+        transform.scaleX(3.0f);
+
+        // Сбрасываем
+        transform.reset();
+
+        // Проверяем сброс
+        Vector3f translation = transform.getTranslation();
+        Vector3f rotation = transform.getRotation();
+        Vector3f scale = transform.getScale();
+
+        assertEquals(0.0f, translation.x, 0.001f);
+        assertEquals(0.0f, translation.y, 0.001f);
+        assertEquals(0.0f, translation.z, 0.001f);
+
+        assertEquals(0.0f, rotation.x, 0.001f);
+        assertEquals(0.0f, rotation.y, 0.001f);
+        assertEquals(0.0f, rotation.z, 0.001f);
+
+        assertEquals(1.0f, scale.x, 0.001f);
+        assertEquals(1.0f, scale.y, 0.001f);
+        assertEquals(1.0f, scale.z, 0.001f);
+    }
+
+    @Test
+    public void testNegativeTranslation() {
+        transform.translate(-5.0f, -10.0f, -15.0f);
+
+        Vector3f actual = transform.getTranslation();
+        assertEquals(-5.0f, actual.x, 0.001f);
+        assertEquals(-10.0f, actual.y, 0.001f);
+        assertEquals(-15.0f, actual.z, 0.001f);
+    }
+
+    @Test
+    public void testNegativeRotation() {
+        transform.rotate(-0.5f, -1.0f, -1.5f);
+
+        Vector3f actual = transform.getRotation();
+        assertEquals(-0.5f, actual.x, 0.001f);
+        assertEquals(-1.0f, actual.y, 0.001f);
+        assertEquals(-1.5f, actual.z, 0.001f);
+    }
+
+    @Test
+    public void testFractionalScale() {
+        transform.scale(0.5f);  // Уменьшение масштаба в 2 раза
+
+        Vector3f actual = transform.getScale();
+        assertEquals(0.5f, actual.x, 0.001f);
+        assertEquals(0.5f, actual.y, 0.001f);
+        assertEquals(0.5f, actual.z, 0.001f);
+    }
+
+    @Test
+    public void testScaleChain() {
+        // Проверяем цепочку масштабирований
+        transform.scale(2.0f);
+        transform.scale(0.5f);
+
+        Vector3f actual = transform.getScale();
+        assertEquals(1.0f, actual.x, 0.001f);  // 2 * 0.5 = 1
+        assertEquals(1.0f, actual.y, 0.001f);
+        assertEquals(1.0f, actual.z, 0.001f);
+    }
+
+    private static final float EPSILON = 0.0001f;
+
+    @Test
+    public void testCreateTranslationMatrix() {
+        Vector3f translation = new Vector3f(10.0f, 20.0f, 30.0f);
+        Matrix4f matrix = GraphicConveyor.createTranslationMatrix(translation);
+
+        // Проверяем матрицу перемещения
+        assertEquals(1.0f, matrix.m00, EPSILON);
+        assertEquals(0.0f, matrix.m01, EPSILON);
+        assertEquals(0.0f, matrix.m02, EPSILON);
+        assertEquals(0.0f, matrix.m03, EPSILON);
+
+        assertEquals(0.0f, matrix.m10, EPSILON);
+        assertEquals(1.0f, matrix.m11, EPSILON);
+        assertEquals(0.0f, matrix.m12, EPSILON);
+        assertEquals(0.0f, matrix.m13, EPSILON);
+
+        assertEquals(0.0f, matrix.m20, EPSILON);
+        assertEquals(0.0f, matrix.m21, EPSILON);
+        assertEquals(1.0f, matrix.m22, EPSILON);
+        assertEquals(0.0f, matrix.m23, EPSILON);
+
+        assertEquals(10.0f, matrix.m30, EPSILON);  // translation.x
+        assertEquals(20.0f, matrix.m31, EPSILON);  // translation.y
+        assertEquals(30.0f, matrix.m32, EPSILON);  // translation.z
+        assertEquals(1.0f, matrix.m33, EPSILON);
+    }
+
+    @Test
+    public void testCreateScaleMatrix() {
+        Vector3f scale = new Vector3f(2.0f, 3.0f, 4.0f);
+        Matrix4f matrix = GraphicConveyor.createScaleMatrix(scale);
+
+        assertEquals(2.0f, matrix.m00, EPSILON);  // scale.x
+        assertEquals(0.0f, matrix.m01, EPSILON);
+        assertEquals(0.0f, matrix.m02, EPSILON);
+        assertEquals(0.0f, matrix.m03, EPSILON);
+
+        assertEquals(0.0f, matrix.m10, EPSILON);
+        assertEquals(3.0f, matrix.m11, EPSILON);  // scale.y
+        assertEquals(0.0f, matrix.m12, EPSILON);
+        assertEquals(0.0f, matrix.m13, EPSILON);
+
+        assertEquals(0.0f, matrix.m20, EPSILON);
+        assertEquals(0.0f, matrix.m21, EPSILON);
+        assertEquals(4.0f, matrix.m22, EPSILON);  // scale.z
+        assertEquals(0.0f, matrix.m23, EPSILON);
+
+        assertEquals(0.0f, matrix.m30, EPSILON);
+        assertEquals(0.0f, matrix.m31, EPSILON);
+        assertEquals(0.0f, matrix.m32, EPSILON);
+        assertEquals(1.0f, matrix.m33, EPSILON);
+    }
+
+    @Test
+    public void testCreateRotationXMatrix() {
+        float angle = (float) Math.PI / 4;  // 45 градусов
+        Matrix4f matrix = GraphicConveyor.createRotationXMatrix(angle);
+
+        float cos = (float) Math.cos(angle);
+        float sin = (float) Math.sin(angle);
+
+        assertEquals(1.0f, matrix.m00, EPSILON);
+        assertEquals(0.0f, matrix.m01, EPSILON);
+        assertEquals(0.0f, matrix.m02, EPSILON);
+        assertEquals(0.0f, matrix.m03, EPSILON);
+
+        assertEquals(0.0f, matrix.m10, EPSILON);
+        assertEquals(cos, matrix.m11, EPSILON);
+        assertEquals(sin, matrix.m12, EPSILON);
+        assertEquals(0.0f, matrix.m13, EPSILON);
+
+        assertEquals(0.0f, matrix.m20, EPSILON);
+        assertEquals(-sin, matrix.m21, EPSILON);
+        assertEquals(cos, matrix.m22, EPSILON);
+        assertEquals(0.0f, matrix.m23, EPSILON);
+
+        assertEquals(0.0f, matrix.m30, EPSILON);
+        assertEquals(0.0f, matrix.m31, EPSILON);
+        assertEquals(0.0f, matrix.m32, EPSILON);
+        assertEquals(1.0f, matrix.m33, EPSILON);
+    }
+
+    @Test
+    public void testCreateRotationYMatrix() {
+        float angle = (float) Math.PI / 3;  // 60 градусов
+        Matrix4f matrix = GraphicConveyor.createRotationYMatrix(angle);
+
+        float cos = (float) Math.cos(angle);
+        float sin = (float) Math.sin(angle);
+
+        assertEquals(cos, matrix.m00, EPSILON);
+        assertEquals(0.0f, matrix.m01, EPSILON);
+        assertEquals(-sin, matrix.m02, EPSILON);
+        assertEquals(0.0f, matrix.m03, EPSILON);
+
+        assertEquals(0.0f, matrix.m10, EPSILON);
+        assertEquals(1.0f, matrix.m11, EPSILON);
+        assertEquals(0.0f, matrix.m12, EPSILON);
+        assertEquals(0.0f, matrix.m13, EPSILON);
+
+        assertEquals(sin, matrix.m20, EPSILON);
+        assertEquals(0.0f, matrix.m21, EPSILON);
+        assertEquals(cos, matrix.m22, EPSILON);
+        assertEquals(0.0f, matrix.m23, EPSILON);
+
+        assertEquals(0.0f, matrix.m30, EPSILON);
+        assertEquals(0.0f, matrix.m31, EPSILON);
+        assertEquals(0.0f, matrix.m32, EPSILON);
+        assertEquals(1.0f, matrix.m33, EPSILON);
+    }
+
+    @Test
+    public void testCreateRotationZMatrix() {
+        float angle = (float) Math.PI / 6;  // 30 градусов
+        Matrix4f matrix = GraphicConveyor.createRotationZMatrix(angle);
+
+        float cos = (float) Math.cos(angle);
+        float sin = (float) Math.sin(angle);
+
+        assertEquals(cos, matrix.m00, EPSILON);
+        assertEquals(sin, matrix.m01, EPSILON);
+        assertEquals(0.0f, matrix.m02, EPSILON);
+        assertEquals(0.0f, matrix.m03, EPSILON);
+
+        assertEquals(-sin, matrix.m10, EPSILON);
+        assertEquals(cos, matrix.m11, EPSILON);
+        assertEquals(0.0f, matrix.m12, EPSILON);
+        assertEquals(0.0f, matrix.m13, EPSILON);
+
+        assertEquals(0.0f, matrix.m20, EPSILON);
+        assertEquals(0.0f, matrix.m21, EPSILON);
+        assertEquals(1.0f, matrix.m22, EPSILON);
+        assertEquals(0.0f, matrix.m23, EPSILON);
+
+        assertEquals(0.0f, matrix.m30, EPSILON);
+        assertEquals(0.0f, matrix.m31, EPSILON);
+        assertEquals(0.0f, matrix.m32, EPSILON);
+        assertEquals(1.0f, matrix.m33, EPSILON);
+    }
+
+    @Test
+    public void testCreateModelMatrixTranslationOnly() {
+        Vector3f translation = new Vector3f(10, 20, 30);
+        Vector3f rotation = new Vector3f(0, 0, 0);
+        Vector3f scale = new Vector3f(1, 1, 1);
+
+        Matrix4f matrix = GraphicConveyor.createModelMatrix(translation, rotation, scale);
+
+        // Проверяем только перемещение
+        assertEquals(1.0f, matrix.m00, EPSILON);
+        assertEquals(1.0f, matrix.m11, EPSILON);
+        assertEquals(1.0f, matrix.m22, EPSILON);
+        assertEquals(10.0f, matrix.m30, EPSILON);
+        assertEquals(20.0f, matrix.m31, EPSILON);
+        assertEquals(30.0f, matrix.m32, EPSILON);
+        assertEquals(1.0f, matrix.m33, EPSILON);
+    }
+
+    @Test
+    public void testCreateModelMatrixScaleOnly() {
+        Vector3f translation = new Vector3f(0, 0, 0);
+        Vector3f rotation = new Vector3f(0, 0, 0);
+        Vector3f scale = new Vector3f(2, 3, 4);
+
+        Matrix4f matrix = GraphicConveyor.createModelMatrix(translation, rotation, scale);
+
+        // Проверяем только масштабирование
+        assertEquals(2.0f, matrix.m00, EPSILON);
+        assertEquals(3.0f, matrix.m11, EPSILON);
+        assertEquals(4.0f, matrix.m22, EPSILON);
+        assertEquals(0.0f, matrix.m30, EPSILON);
+        assertEquals(0.0f, matrix.m31, EPSILON);
+        assertEquals(0.0f, matrix.m32, EPSILON);
+        assertEquals(1.0f, matrix.m33, EPSILON);
+    }
+
+    @Test
+    public void testMultiplyMatrix4ByVector3() {
+        // Тестируем умножение матрицы на вектор
+        float[] matrixData = {
+                2, 0, 0, 0,
+                0, 3, 0, 0,
+                0, 0, 4, 0,
+                10, 20, 30, 1
+        };
+        Matrix4f matrix = new Matrix4f(matrixData);
+        Vector3f vector = new Vector3f(1, 2, 3);
+
+        Vector3f result = GraphicConveyor.multiplyMatrix4ByVector3(matrix, vector);
+
+        // Ожидаемый результат: (2*1 + 10, 3*2 + 20, 4*3 + 30) = (12, 26, 42)
+        assertEquals(12.0f, result.x, EPSILON);
+        assertEquals(26.0f, result.y, EPSILON);
+        assertEquals(42.0f, result.z, EPSILON);
+    }
+
+    @Test
+    public void testMultiplyMatrix4ByVector3WithPerspective() {
+        // Тест с перспективной матрицей (w != 1)
+        float[] matrixData = {
+                1, 0, 0, 0,
+                0, 1, 0, 0,
+                0, 0, 1, 1,  // m23 = 1 для перспективы
+                0, 0, 0, 0
+        };
+        Matrix4f matrix = new Matrix4f(matrixData);
+        Vector3f vector = new Vector3f(1, 2, 3);
+
+        Vector3f result = GraphicConveyor.multiplyMatrix4ByVector3(matrix, vector);
+
+        // w = 1*0 + 2*0 + 3*1 + 0 = 3
+        // x/w = 1/3, y/w = 2/3, z/w = 3/3 = 1
+        assertEquals(1.0f/3.0f, result.x, EPSILON);
+        assertEquals(2.0f/3.0f, result.y, EPSILON);
+        assertEquals(1.0f, result.z, EPSILON);
+    }
+}
