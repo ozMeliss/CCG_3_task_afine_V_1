@@ -22,7 +22,6 @@ public class AfineTest {
 
     @Test
     public void testDefaultConstructor() {
-        // Проверяем значения по умолчанию
         Vector3f translation = transform.getTranslation();
         Vector3f rotation = transform.getRotation();
         Vector3f scale = transform.getScale();
