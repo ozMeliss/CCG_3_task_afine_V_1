@@ -4,6 +4,7 @@ import com.cgvsu.render_engine.GraphicConveyor;
 import com.cgvsu.render_engine.Transform;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 import javax.vecmath.Matrix4f;
@@ -144,8 +145,8 @@ public class AfineTest {
 
         Vector3f actual = transform.getScale();
         assertEquals(2.0f, actual.x, 0.001f);
-        assertEquals(1.0f, actual.y, 0.001f);  // Не изменилось
-        assertEquals(1.0f, actual.z, 0.001f);  // Не изменилось
+        assertEquals(1.0f, actual.y, 0.001f);
+        assertEquals(1.0f, actual.z, 0.001f);
     }
 
     @Test
@@ -170,29 +171,24 @@ public class AfineTest {
 
     @Test
     public void testMultipleScaleOperations() {
-        // Комбинирование различных операций масштабирования
-        transform.scale(2.0f);         // Все оси: 2, 2, 2
-        transform.scaleX(0.5f);        // X: 2 * 0.5 = 1
-        transform.scaleY(3.0f);        // Y: 2 * 3 = 6
-        transform.scale(1.5f);         // Все оси: 1.5, 9, 3
+        transform.scale(2.0f);
+        transform.scaleX(0.5f);
+        transform.scaleY(3.0f);
+        transform.scale(1.5f);
 
         Vector3f actual = transform.getScale();
-        assertEquals(1.5f, actual.x, 0.001f);  // 1 * 1.5
-        assertEquals(9.0f, actual.y, 0.001f);  // 6 * 1.5
-        assertEquals(3.0f, actual.z, 0.001f);  // 2 * 1.5
+        assertEquals(1.5f, actual.x, 0.001f);
+        assertEquals(9.0f, actual.y, 0.001f);
+        assertEquals(3.0f, actual.z, 0.001f);
     }
 
     @Test
     public void testReset() {
-        // Устанавливаем ненулевые значения
+
         transform.setTranslation(new Vector3f(10.0f, 20.0f, 30.0f));
         transform.setRotation(new Vector3f(1.0f, 2.0f, 3.0f));
         transform.setScale(new Vector3f(4.0f, 5.0f, 6.0f));
-
-        // Сбрасываем
         transform.reset();
-
-        // Проверяем сброс к значениям по умолчанию
         Vector3f translation = transform.getTranslation();
         Vector3f rotation = transform.getRotation();
         Vector3f scale = transform.getScale();
@@ -212,28 +208,20 @@ public class AfineTest {
 
     @Test
     public void testResetAfterOperations() {
-        // Выполняем различные операции
         transform.translate(5.0f, 10.0f, 15.0f);
         transform.rotate(0.5f, 1.0f, 1.5f);
         transform.scale(2.0f);
         transform.scaleX(3.0f);
-
-        // Сбрасываем
         transform.reset();
-
-        // Проверяем сброс
         Vector3f translation = transform.getTranslation();
         Vector3f rotation = transform.getRotation();
         Vector3f scale = transform.getScale();
-
         assertEquals(0.0f, translation.x, 0.001f);
         assertEquals(0.0f, translation.y, 0.001f);
         assertEquals(0.0f, translation.z, 0.001f);
-
         assertEquals(0.0f, rotation.x, 0.001f);
         assertEquals(0.0f, rotation.y, 0.001f);
         assertEquals(0.0f, rotation.z, 0.001f);
-
         assertEquals(1.0f, scale.x, 0.001f);
         assertEquals(1.0f, scale.y, 0.001f);
         assertEquals(1.0f, scale.z, 0.001f);
@@ -261,8 +249,7 @@ public class AfineTest {
 
     @Test
     public void testFractionalScale() {
-        transform.scale(0.5f);  // Уменьшение масштаба в 2 раза
-
+        transform.scale(0.5f);
         Vector3f actual = transform.getScale();
         assertEquals(0.5f, actual.x, 0.001f);
         assertEquals(0.5f, actual.y, 0.001f);
@@ -271,10 +258,8 @@ public class AfineTest {
 
     @Test
     public void testScaleChain() {
-        // Проверяем цепочку масштабирований
         transform.scale(2.0f);
         transform.scale(0.5f);
-
         Vector3f actual = transform.getScale();
         assertEquals(1.0f, actual.x, 0.001f);  // 2 * 0.5 = 1
         assertEquals(1.0f, actual.y, 0.001f);
@@ -288,7 +273,6 @@ public class AfineTest {
         Vector3f translation = new Vector3f(10.0f, 20.0f, 30.0f);
         Matrix4f matrix = GraphicConveyor.createTranslationMatrix(translation);
 
-        // Проверяем матрицу перемещения
         assertEquals(1.0f, matrix.m00, EPSILON);
         assertEquals(0.0f, matrix.m01, EPSILON);
         assertEquals(0.0f, matrix.m02, EPSILON);
@@ -304,9 +288,9 @@ public class AfineTest {
         assertEquals(1.0f, matrix.m22, EPSILON);
         assertEquals(0.0f, matrix.m23, EPSILON);
 
-        assertEquals(10.0f, matrix.m30, EPSILON);  // translation.x
-        assertEquals(20.0f, matrix.m31, EPSILON);  // translation.y
-        assertEquals(30.0f, matrix.m32, EPSILON);  // translation.z
+        assertEquals(10.0f, matrix.m30, EPSILON);
+        assertEquals(20.0f, matrix.m31, EPSILON);
+        assertEquals(30.0f, matrix.m32, EPSILON);
         assertEquals(1.0f, matrix.m33, EPSILON);
     }
 
@@ -315,19 +299,19 @@ public class AfineTest {
         Vector3f scale = new Vector3f(2.0f, 3.0f, 4.0f);
         Matrix4f matrix = GraphicConveyor.createScaleMatrix(scale);
 
-        assertEquals(2.0f, matrix.m00, EPSILON);  // scale.x
+        assertEquals(2.0f, matrix.m00, EPSILON);
         assertEquals(0.0f, matrix.m01, EPSILON);
         assertEquals(0.0f, matrix.m02, EPSILON);
         assertEquals(0.0f, matrix.m03, EPSILON);
 
         assertEquals(0.0f, matrix.m10, EPSILON);
-        assertEquals(3.0f, matrix.m11, EPSILON);  // scale.y
+        assertEquals(3.0f, matrix.m11, EPSILON);
         assertEquals(0.0f, matrix.m12, EPSILON);
         assertEquals(0.0f, matrix.m13, EPSILON);
 
         assertEquals(0.0f, matrix.m20, EPSILON);
         assertEquals(0.0f, matrix.m21, EPSILON);
-        assertEquals(4.0f, matrix.m22, EPSILON);  // scale.z
+        assertEquals(4.0f, matrix.m22, EPSILON);
         assertEquals(0.0f, matrix.m23, EPSILON);
 
         assertEquals(0.0f, matrix.m30, EPSILON);
@@ -338,7 +322,7 @@ public class AfineTest {
 
     @Test
     public void testCreateRotationXMatrix() {
-        float angle = (float) Math.PI / 4;  // 45 градусов
+        float angle = (float) Math.PI / 4;
         Matrix4f matrix = GraphicConveyor.createRotationXMatrix(angle);
 
         float cos = (float) Math.cos(angle);
@@ -367,7 +351,7 @@ public class AfineTest {
 
     @Test
     public void testCreateRotationYMatrix() {
-        float angle = (float) Math.PI / 3;  // 60 градусов
+        float angle = (float) Math.PI / 3;
         Matrix4f matrix = GraphicConveyor.createRotationYMatrix(angle);
 
         float cos = (float) Math.cos(angle);
@@ -396,7 +380,7 @@ public class AfineTest {
 
     @Test
     public void testCreateRotationZMatrix() {
-        float angle = (float) Math.PI / 6;  // 30 градусов
+        float angle = (float) Math.PI / 6;
         Matrix4f matrix = GraphicConveyor.createRotationZMatrix(angle);
 
         float cos = (float) Math.cos(angle);
@@ -431,7 +415,6 @@ public class AfineTest {
 
         Matrix4f matrix = GraphicConveyor.createModelMatrix(translation, rotation, scale);
 
-        // Проверяем только перемещение
         assertEquals(1.0f, matrix.m00, EPSILON);
         assertEquals(1.0f, matrix.m11, EPSILON);
         assertEquals(1.0f, matrix.m22, EPSILON);
@@ -449,7 +432,6 @@ public class AfineTest {
 
         Matrix4f matrix = GraphicConveyor.createModelMatrix(translation, rotation, scale);
 
-        // Проверяем только масштабирование
         assertEquals(2.0f, matrix.m00, EPSILON);
         assertEquals(3.0f, matrix.m11, EPSILON);
         assertEquals(4.0f, matrix.m22, EPSILON);
@@ -461,7 +443,6 @@ public class AfineTest {
 
     @Test
     public void testMultiplyMatrix4ByVector3() {
-        // Тестируем умножение матрицы на вектор
         float[] matrixData = {
                 2, 0, 0, 0,
                 0, 3, 0, 0,
@@ -470,10 +451,7 @@ public class AfineTest {
         };
         Matrix4f matrix = new Matrix4f(matrixData);
         Vector3f vector = new Vector3f(1, 2, 3);
-
         Vector3f result = GraphicConveyor.multiplyMatrix4ByVector3(matrix, vector);
-
-        // Ожидаемый результат: (2*1 + 10, 3*2 + 20, 4*3 + 30) = (12, 26, 42)
         assertEquals(12.0f, result.x, EPSILON);
         assertEquals(26.0f, result.y, EPSILON);
         assertEquals(42.0f, result.z, EPSILON);
@@ -481,11 +459,10 @@ public class AfineTest {
 
     @Test
     public void testMultiplyMatrix4ByVector3WithPerspective() {
-        // Тест с перспективной матрицей (w != 1)
         float[] matrixData = {
                 1, 0, 0, 0,
                 0, 1, 0, 0,
-                0, 0, 1, 1,  // m23 = 1 для перспективы
+                0, 0, 1, 1,
                 0, 0, 0, 0
         };
         Matrix4f matrix = new Matrix4f(matrixData);
@@ -493,10 +470,8 @@ public class AfineTest {
 
         Vector3f result = GraphicConveyor.multiplyMatrix4ByVector3(matrix, vector);
 
-        // w = 1*0 + 2*0 + 3*1 + 0 = 3
-        // x/w = 1/3, y/w = 2/3, z/w = 3/3 = 1
-        assertEquals(1.0f/3.0f, result.x, EPSILON);
-        assertEquals(2.0f/3.0f, result.y, EPSILON);
+        assertEquals(1.0f / 3.0f, result.x, EPSILON);
+        assertEquals(2.0f / 3.0f, result.y, EPSILON);
         assertEquals(1.0f, result.z, EPSILON);
     }
 }
