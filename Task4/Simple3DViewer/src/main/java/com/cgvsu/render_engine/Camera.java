@@ -44,7 +44,7 @@ public class Camera {
     }
 
     public void moveTarget(final Vector3f translation) {
-        this.target.add(target);
+        this.target.add(target); //????????????
     }
 
     Matrix4f getViewMatrix() {

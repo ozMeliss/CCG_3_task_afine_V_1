@@ -26,9 +26,9 @@ public class RenderEngine {
         Matrix4f viewMatrix = camera.getViewMatrix();
         Matrix4f projectionMatrix = camera.getProjectionMatrix();
 
-        Matrix4f modelViewProjectionMatrix = new Matrix4f(modelMatrix);
+        Matrix4f modelViewProjectionMatrix = new Matrix4f(projectionMatrix);
         modelViewProjectionMatrix.mul(viewMatrix);
-        modelViewProjectionMatrix.mul(projectionMatrix);
+        modelViewProjectionMatrix.mul(modelMatrix);
 
         final int nPolygons = mesh.polygons.size();
         for (int polygonInd = 0; polygonInd < nPolygons; ++polygonInd) {
@@ -60,4 +60,4 @@ public class RenderEngine {
                         resultPoints.get(0).y);
         }
     }
-}
+} // что-то тут поменять под столбцы (камера), порядок умножения поменять, сделать видовую матрицу и матрицу переноса

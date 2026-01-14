@@ -25,7 +25,9 @@ public class GraphicConveyor {
                 resultX.y, resultY.y, resultZ.y, 0,
                 resultX.z, resultY.z, resultZ.z, 0,
                 -resultX.dot(eye), -resultY.dot(eye), -resultZ.dot(eye), 1};
-        return new Matrix4f(matrix);
+        Matrix4f m = new Matrix4f(matrix);
+        m.transpose();
+        return m;
     }
 
     public static Matrix4f perspective(
@@ -40,14 +42,15 @@ public class GraphicConveyor {
         result.m22 = (farPlane + nearPlane) / (farPlane - nearPlane);
         result.m23 = 1.0F;
         result.m32 = 2 * (nearPlane * farPlane) / (nearPlane - farPlane);
+        result.transpose();
         return result;
     }
 
     public static Vector3f multiplyMatrix4ByVector3(final Matrix4f matrix, final Vector3f vertex) {
-        final float x = (vertex.x * matrix.m00) + (vertex.y * matrix.m10) + (vertex.z * matrix.m20) + matrix.m30;
-        final float y = (vertex.x * matrix.m01) + (vertex.y * matrix.m11) + (vertex.z * matrix.m21) + matrix.m31;
-        final float z = (vertex.x * matrix.m02) + (vertex.y * matrix.m12) + (vertex.z * matrix.m22) + matrix.m32;
-        final float w = (vertex.x * matrix.m03) + (vertex.y * matrix.m13) + (vertex.z * matrix.m23) + matrix.m33;
+        final float x = (matrix.m00 * vertex.x) + (matrix.m01 * vertex.y) + (matrix.m02 * vertex.z) + matrix.m03;
+        final float y = (matrix.m10 * vertex.x) + (matrix.m11 * vertex.y) + (matrix.m12 * vertex.z) + matrix.m13;
+        final float z = (matrix.m20 * vertex.x) + (matrix.m21 * vertex.y) + (matrix.m22 * vertex.z) + matrix.m23;
+        final float w = (matrix.m30 * vertex.x) + (matrix.m31 * vertex.y) + (matrix.m32 * vertex.z) + matrix.m33;
         return new Vector3f(x / w, y / w, z / w);
     }
 
@@ -58,10 +61,10 @@ public class GraphicConveyor {
     // Матрица перемещения
     public static Matrix4f createTranslationMatrix(Vector3f translation) {
         float[] matrix = new float[]{
-                1, 0, 0, 0,
-                0, 1, 0, 0,
-                0, 0, 1, 0,
-                translation.x, translation.y, translation.z, 1};
+                1, 0, 0, translation.x,
+                0, 1, 0, translation.y,
+                0, 0, 1, translation.z,
+                0, 0, 0, 1};
         return new Matrix4f(matrix);
     }
 
@@ -111,31 +114,31 @@ public class GraphicConveyor {
 
     public static Matrix4f createModelMatrix(Vector3f translation, Vector3f rotation, Vector3f scale) {
         Matrix4f scaleMatrix = createScaleMatrix(scale);
-        // Поворот (Z → Y → X)
+        // Поворот (X → Y → Z)
         Matrix4f rotationMatrix = new Matrix4f();
         rotationMatrix.setIdentity();
 
-        if (rotation.z != 0) {
-            Matrix4f rotZ = createRotationZMatrix(rotation.z);
-            rotationMatrix.mul(rotZ);
+        if (rotation.x != 0) {
+            Matrix4f rotX = createRotationXMatrix(rotation.x);
+            rotationMatrix.mul(rotX);
         }
         if (rotation.y != 0) {
             Matrix4f rotY = createRotationYMatrix(rotation.y);
             rotationMatrix.mul(rotY);
         }
-        if (rotation.x != 0) {
-            Matrix4f rotX = createRotationXMatrix(rotation.x);
-            rotationMatrix.mul(rotX);
+        if (rotation.z != 0) {
+            Matrix4f rotZ = createRotationZMatrix(rotation.z);
+            rotationMatrix.mul(rotZ);
         }
 
         // Перемещение
         Matrix4f translationMatrix = createTranslationMatrix(translation);
 
-        // Scale * Rotation * Translation
-        Matrix4f result = new Matrix4f(scaleMatrix);
+        // Translation * Rotation * Scale
+        Matrix4f result = new Matrix4f(translationMatrix);
         result.mul(rotationMatrix);
-        result.mul(translationMatrix);
-
+        result.mul(scaleMatrix);
         return result;
     }
 }
+//переписать для столбцов перенос
