@@ -7,7 +7,7 @@ public class GraphicConveyor {
         return lookAt(eye, target, new Vector3f(0F, 1.0F, 0F));
     }
 
-    public static Matrix4f lookAt(Vector3f eye, Vector3f target, Vector3f up) {
+    public static Matrix4f lookAt(Vector3f eye, Vector3f target, Vector3f up) { //видовая матрица
         Vector3f resultX = new Vector3f();
         Vector3f resultY = new Vector3f();
         Vector3f resultZ = new Vector3f();
@@ -30,7 +30,7 @@ public class GraphicConveyor {
         return m;
     }
 
-    public static Matrix4f perspective(
+    public static Matrix4f perspective( //матрица проекции
             final float fov,
             final float aspectRatio,
             final float nearPlane,
@@ -141,4 +141,3 @@ public class GraphicConveyor {
         return result;
     }
 }
-//переписать для столбцов перенос
